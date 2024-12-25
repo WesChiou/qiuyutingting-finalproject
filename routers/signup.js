@@ -1,35 +1,60 @@
 import { db } from '../db.js';
+import Ajv from 'ajv';
+import addErrors from 'ajv-errors';
 
-function validateSignupBody(body){
-  if (!body.username) {
-    throw new Error('请输入用户名！');
-  }  
-  if (!body.password) {
-    throw new Error('请输入密码！');
-  } 
-  if (typeof body.username !== 'string') {
-    throw new Error('用户名必须为字符串！');
-  } 
-  if (body.username?.length < 6 || body.username?.length > 64) {
-    throw new Error('用户名不能少于6个字符或大于64个字符！');
-  } 
-  if (typeof body.password !== 'string') {
-    throw new Error('密码必须为字符串！');
-  } 
-  if (body.password?.length < 8 || body.password?.length > 32) {
-    throw new Error('密码不能少于8个字符或大于32个字符！');
-  }
-}
+const ajv = new Ajv({ allErrors: true, useDefaults: true, coerceTypes: true });
+
+addErrors(ajv);
+
+const schema = {
+  type: 'object',
+  properties: {
+    username: { 
+      type: 'string', 
+      minLength: 6, 
+      maxLength: 64,
+      errorMessage: {
+        type: '用户名必须是字符串！',
+        minLength: '用户名不能少于6个字符！',
+        maxLength: '用户名不能超过64个字符！',
+      },
+    },
+    password: { 
+      type: 'string', 
+      minLength: 8, 
+      maxLength: 32,
+      errorMessage: {
+        type: '密码必须是字符串！',
+        minLength: '密码不能少于8个字符！',
+        maxLength: '密码不能超过32个字符！',
+      },
+    },
+  },
+  required: ['username', 'password'], 
+  additionalProperties: false,
+  errorMessage: {
+    required: {
+      username: '请输入用户名！',
+      password: '请输入密码！',
+    },
+    additionalProperties: '不允许额外的字段！',
+  }, 
+};
+
+const validate = ajv.compile(schema);
 
 export default async (ctx, next) => {
   try {
-    validateSignupBody(ctx.request.body);
+    const valid = validate(ctx.request.body);
+    if (!valid) {
+      throw new Error(validate.errors[0].message);
+    }
   } catch (err) {
     ctx.status = 400;
-    ctx.body = { msg: err.message};
+    ctx.body = { msg: err.message };
     return;
   }
-  
+
   const { username, password } = ctx.request.body;
 
   const collection = db.collection('user');

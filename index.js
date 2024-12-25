@@ -10,8 +10,7 @@ import createAlbum from './routers/createAlbum.js';
 import getAlbum from './routers/getAlbum.js';
 import deleteAlbum from './routers/deleteAlbum.js';
 import updateAlbum from './routers/updateAlbum.js';
-// TODO: 参数校验改为 ajv 校验
-// TODO: 将中间件抽离到单独的文件中导出使用
+
 dotenv.config();
 
 var app = new Koa();
