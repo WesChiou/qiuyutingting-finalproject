@@ -20,7 +20,7 @@ export default async (ctx, next) => {
     return;
   }
 
-  const collection = db.collection('album');
+  const collection = db.collection('albums');
   const result = await collection.updateOne(
     { _id: new ObjectId(id), user_id: ctx.tokenPayload?.id }, 
     { $set: { name } } 

@@ -4,7 +4,7 @@ import { db } from '../db.js';
 export default async (ctx, next) => {
   const { username, password } = ctx.request.body;
 
-  const collection = db.collection('user');
+  const collection = db.collection('users');
   const user = await collection.findOne({ username, password });
 
   if (user) {

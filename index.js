@@ -10,6 +10,7 @@ import createAlbum from './routers/createAlbum.js';
 import getAlbum from './routers/getAlbum.js';
 import deleteAlbum from './routers/deleteAlbum.js';
 import updateAlbum from './routers/updateAlbum.js';
+import uploadPhoto from './routers/uploadPhoto.js';
 
 dotenv.config();
 
@@ -47,6 +48,7 @@ router.post('/album', authorize, createAlbum);
 router.get('/album', authorize, getAlbum);
 router.delete('/album/:id', authorize, deleteAlbum);
 router.put('/album/:id', authorize, updateAlbum);
+router.post('/photo', authorize, uploadPhoto);
 
 app
   .use(router.routes())

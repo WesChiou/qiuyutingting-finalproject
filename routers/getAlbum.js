@@ -1,7 +1,7 @@
 import { db } from '../db.js';
 
 export default async (ctx, next) => {
-  const collection = db.collection('album');
+  const collection = db.collection('albums');
   const albums = await collection.find({ user_id: ctx.tokenPayload?.id }).toArray();
 
   ctx.status = 200;

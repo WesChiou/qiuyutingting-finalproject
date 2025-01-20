@@ -9,7 +9,7 @@ export default async (ctx, next) => {
     return;
   }
 
-  const collection = db.collection('album');
+  const collection = db.collection('albums');
   const result = await collection.deleteOne({ 
     user_id: ctx.tokenPayload?.id, 
     _id: new ObjectId(id),

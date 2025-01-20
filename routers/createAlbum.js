@@ -13,7 +13,7 @@ export default async (ctx, next) =>{
     return;
   }
 
-  const collection = db.collection('album');
+  const collection = db.collection('albums');
   const album = await collection.findOne({ name, user_id: ctx.tokenPayload?.id });
 
   if (album) {
