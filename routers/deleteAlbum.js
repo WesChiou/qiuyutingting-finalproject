@@ -11,7 +11,7 @@ export default async (ctx, next) => {
 
   const collection = db.collection('albums');
   const result = await collection.deleteOne({ 
-    user_id: ctx.tokenPayload?.id, 
+    userId: ctx.tokenPayload?.id,
     _id: new ObjectId(id),
   });
   

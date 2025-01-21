@@ -2,10 +2,11 @@ import path from 'path';
 import fs from 'fs';
 import dayjs from 'dayjs';
 import formidable from 'formidable';
+import sharp from 'sharp';
 import { db } from '../db.js';
 
 function parseForm(req) {
-  const uploadDir = path.join(process.env.FILE_UPLOAD_DIR, dayjs().format('YYYY\\MMDD'));
+  const uploadDir = path.join(process.env.FILE_UPLOAD_DIR, dayjs().format('YYYY/MMDD'));
   fs.mkdirSync(uploadDir, { recursive: true });
 
   const form = formidable({
@@ -44,26 +45,35 @@ export default async (ctx, next) => {
   const collection = db.collection('photos');
   const tasks = [];
 
-  photos.map((photo) => {
+  photos.map(async (photo) => {
     const {
       size,
       filepath,
       newFilename,
       mimetype,
-      // mtime, // TODO
+      mtime,
+      // length, // TODO: undefined ?
       originalFilename,
       hash,
-    } = photo;
+    } = photo.toJSON(); // [formidable] interface File
+
+    let metadata = null;
+    try {
+      metadata = await sharp(filepath).metadata();
+    } catch (e) {
+      console.error(e);
+    }
 
     const task = collection.insertOne({
       size,
-      filepath,
-      newFilename,
+      filepathSegments: path.normalize(filepath).split(path.sep).slice(-3), // Will get ['2025', '0121', 'xxx.png'] etc.
+      filename: newFilename,
       mimetype,
-      // mtime,
+      mtime,
       originalFilename,
       hash,
-      uploader_id: ctx.tokenPayload?.id,
+      metadata,
+      uploaderId: ctx.tokenPayload?.id,
     });
 
     tasks.push(task);

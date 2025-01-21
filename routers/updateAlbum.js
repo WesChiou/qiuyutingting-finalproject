@@ -22,7 +22,7 @@ export default async (ctx, next) => {
 
   const collection = db.collection('albums');
   const result = await collection.updateOne(
-    { _id: new ObjectId(id), user_id: ctx.tokenPayload?.id }, 
+    { _id: new ObjectId(id), userId: ctx.tokenPayload?.id },
     { $set: { name } } 
   );
   if (result.matchedCount) {
