@@ -37,6 +37,7 @@ export default async (ctx, next) => {
     photos = files.photos;
   } catch (e) {
     console.error(e);
+    // TOOD: 使用 ctx.throw 方法更优雅的向前端返回异常（多处需要更改）
     ctx.status = 400;
     ctx.body = { msg: e.message };
     return;

@@ -67,7 +67,7 @@ export default async (ctx, next) => {
     // TODO: 不能存储明文密码
     await collection.insertOne({ username, password });
     ctx.status = 201;
-    ctx.body = {msg: '创建成功！'};
+    ctx.body = { msg: '创建成功！' };
   }
 
 }
